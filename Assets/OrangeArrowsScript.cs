@@ -248,42 +248,35 @@ public class OrangeArrowsScript : MonoBehaviour {
 
     //twitch plays
     #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"!{0} left right down up [Presses the corresponding arrow buttons. Entire sequence must be entered.] | Direction words can be substituted as one letter (Ex. right as r)";
+    private readonly string TwitchHelpMessage = @"!{0} left right down up [Presses the corresponding arrow buttons. The ENTIRE sequence must be entered in one command or else an error will occur.] | Direction words can be substituted as one letter (Ex. right as r)";
     #pragma warning restore 414
 
     IEnumerator ProcessTwitchCommand(string command)
     {
         string[] parameters = command.Split(' ');
-        if(parameters.Length == movesEDIT.Length)
+        var buttonsToPress = new List<KMSelectable>();
+        if (parameters.Length == movesEDIT.Length)
         {
             foreach (string param in parameters)
             {
-                yield return null;
                 if (param.EqualsIgnoreCase("up") || param.EqualsIgnoreCase("u"))
-                {
-                    buttons[0].OnInteract();
-                    yield return new WaitForSeconds(0.1f);
-                }
+                    buttonsToPress.Add(buttons[0]);
                 else if (param.EqualsIgnoreCase("down") || param.EqualsIgnoreCase("d"))
-                {
-                    buttons[1].OnInteract();
-                    yield return new WaitForSeconds(0.1f);
-                }
+                    buttonsToPress.Add(buttons[1]);
                 else if (param.EqualsIgnoreCase("left") || param.EqualsIgnoreCase("l"))
-                {
-                    buttons[2].OnInteract();
-                    yield return new WaitForSeconds(0.1f);
-                }
+                    buttonsToPress.Add(buttons[2]);
                 else if (param.EqualsIgnoreCase("right") || param.EqualsIgnoreCase("r"))
-                {
-                    buttons[3].OnInteract();
-                    yield return new WaitForSeconds(0.1f);
-                }
+                    buttonsToPress.Add(buttons[3]);
                 else
-                {
-                    break;
-                }
+                    yield break;
             }
         }
+        else
+        {
+            yield break;
+        }
+
+        yield return null;
+        yield return buttonsToPress;
     }
 }

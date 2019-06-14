@@ -2,7 +2,7 @@
   "Author": "eXish",
   "Compatibility": "Compatible",
   "DefuserDifficulty": "Very Easy",
-  "Description": "Determine which yellow directional buttons to press using a rule table. Tags: orange, arrows, sequence, display, 4-buttons",
+  "Description": "Determine which orange directional arrows to press from a flashing sequence. Tags: orange, arrows, sequence, display, 4-buttons",
   "ExpertDifficulty": "Very Easy",
   "ModuleID": "orangeArrowsModule",
   "Name": "Orange Arrows",
