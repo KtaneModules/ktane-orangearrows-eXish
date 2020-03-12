@@ -105,6 +105,7 @@ public class OrangeArrowsScript : MonoBehaviour {
                 numDisplay.GetComponent<TextMesh>().text = " ";
                 if (stage == 3 && current == movesEDIT.Length)
                 {
+                    moduleSolved = true;
                     StartCoroutine(victory());
                 }
                 else if (current == movesEDIT.Length)
@@ -243,7 +244,6 @@ public class OrangeArrowsScript : MonoBehaviour {
         bulb3.material = colors[2];
         Debug.LogFormat("[Orange Arrows #{0}] All Sequences were correct! Module Disarmed!", moduleId);
         GetComponent<KMBombModule>().HandlePass();
-        moduleSolved = true;
     }
 
     //twitch plays
@@ -273,10 +273,13 @@ public class OrangeArrowsScript : MonoBehaviour {
         }
         else
         {
+            yield return null;
+            yield return "sendtochaterror Error - Please include the entire sequence of arrows to press!";
             yield break;
         }
 
         yield return null;
         yield return buttonsToPress;
+        if (moduleSolved) { yield return "solve"; }
     }
 }
