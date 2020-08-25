@@ -53,7 +53,7 @@ public class OrangeArrowsScript : MonoBehaviour {
         {
             bulb1.material = colors[2];
             bulb2.material = colors[1];
-        }else if(stage == 3)
+        }else if (stage == 3)
         {
             bulb1.material = colors[2];
             bulb2.material = colors[2];
@@ -66,35 +66,35 @@ public class OrangeArrowsScript : MonoBehaviour {
 
     void PressButton(KMSelectable pressed)
     {
-        if(moduleSolved != true)
+        if (moduleSolved != true)
         {
             pressed.AddInteractionPunch(0.25f);
-            audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
-            if(pressed == buttons[0] && !movesEDIT[current].Equals("UP"))
+            audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, pressed.transform);
+            if (pressed == buttons[0] && !movesEDIT[current].Equals("UP"))
             {
                 GetComponent<KMBombModule>().HandleStrike();
-                Debug.LogFormat("[Orange Arrows #{0}] The button 'UP' was incorrect, expected '{1}'! Resetting sequence...", moduleId, moves[current]);
+                Debug.LogFormat("[Orange Arrows #{0}] The button 'UP' was incorrect, expected '{1}'! Resetting sequence...", moduleId, movesEDIT[current]);
                 StopCoroutine(co);
                 Start();
             }
             else if (pressed == buttons[1] && !movesEDIT[current].Equals("DOWN"))
             {
                 GetComponent<KMBombModule>().HandleStrike();
-                Debug.LogFormat("[Orange Arrows #{0}] The button 'DOWN' was incorrect, expected '{1}'! Resetting sequence...", moduleId, moves[current]);
+                Debug.LogFormat("[Orange Arrows #{0}] The button 'DOWN' was incorrect, expected '{1}'! Resetting sequence...", moduleId, movesEDIT[current]);
                 StopCoroutine(co);
                 Start();
             }
             else if (pressed == buttons[2] && !movesEDIT[current].Equals("LEFT"))
             {
                 GetComponent<KMBombModule>().HandleStrike();
-                Debug.LogFormat("[Orange Arrows #{0}] The button 'LEFT' was incorrect, expected '{1}'! Resetting sequence...", moduleId, moves[current]);
+                Debug.LogFormat("[Orange Arrows #{0}] The button 'LEFT' was incorrect, expected '{1}'! Resetting sequence...", moduleId, movesEDIT[current]);
                 StopCoroutine(co);
                 Start();
             }
             else if (pressed == buttons[3] && !movesEDIT[current].Equals("RIGHT"))
             {
                 GetComponent<KMBombModule>().HandleStrike();
-                Debug.LogFormat("[Orange Arrows #{0}] The button 'RIGHT' was incorrect, expected '{1}'! Resetting sequence...", moduleId, moves[current]);
+                Debug.LogFormat("[Orange Arrows #{0}] The button 'RIGHT' was incorrect, expected '{1}'! Resetting sequence...", moduleId, movesEDIT[current]);
                 StopCoroutine(co);
                 Start();
             }
@@ -119,15 +119,15 @@ public class OrangeArrowsScript : MonoBehaviour {
 
     private void randomizeMoves()
     {
-        int rando = UnityEngine.Random.RandomRange(5,13);
+        int rando = UnityEngine.Random.Range(5,13);
         int random = 0;
         int counter = 0;
         moves = new string[rando];
         movesEDIT = new string[rando];
-        for(int i = 0; i < rando; i++)
+        for (int i = 0; i < rando; i++)
         {
-            random = UnityEngine.Random.RandomRange(0, 4);
-            if(counter == 3)
+            random = UnityEngine.Random.Range(0, 4);
+            if (counter == 3)
             {
                 if (random == 0)
                 {
@@ -195,7 +195,7 @@ public class OrangeArrowsScript : MonoBehaviour {
         yield return null;
         yield return new WaitForSeconds(2.0f);
         rotator = 0;
-        while(rotator < movesEDIT.Length)
+        while (rotator < movesEDIT.Length)
         {
             if (moves[rotator].Equals("UP"))
             {
@@ -228,7 +228,7 @@ public class OrangeArrowsScript : MonoBehaviour {
         numDisplay.GetComponent<TextMesh>().fontSize = 160;
         for (int i = 0; i < 100; i++)
         {
-            int rand1 = UnityEngine.Random.RandomRange(0, 10);
+            int rand1 = UnityEngine.Random.Range(0, 10);
             if (i < 50)
             {
                 numDisplay.GetComponent<TextMesh>().text = rand1 + "";
@@ -242,7 +242,7 @@ public class OrangeArrowsScript : MonoBehaviour {
         numDisplay.GetComponent<TextMesh>().text = "GG";
         StopCoroutine("victory");
         bulb3.material = colors[2];
-        Debug.LogFormat("[Orange Arrows #{0}] All Sequences were correct! Module Disarmed!", moduleId);
+        Debug.LogFormat("[Orange Arrows #{0}] All sequences were correct! Module Disarmed!", moduleId);
         GetComponent<KMBombModule>().HandlePass();
     }
 
