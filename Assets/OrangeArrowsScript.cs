@@ -1,8 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using KModkit;
 using System;
 
 public class OrangeArrowsScript : MonoBehaviour
@@ -10,9 +8,10 @@ public class OrangeArrowsScript : MonoBehaviour
 
     public KMAudio audio;
     public KMBombInfo bomb;
-
+    public KMColorblindMode colorblind;
     public KMSelectable[] buttons;
     public GameObject numDisplay;
+    public GameObject colorblindText;
 
     public Renderer bulb1;
     public Renderer bulb2;
@@ -28,6 +27,9 @@ public class OrangeArrowsScript : MonoBehaviour
 
     private int stage;
 
+    private bool cbEnabled;
+    private bool activated;
+
     private Coroutine co;
 
     static int moduleIdCounter = 1;
@@ -38,15 +40,15 @@ public class OrangeArrowsScript : MonoBehaviour
     void Awake()
     {
         stage = 1;
-        current = 0;
-        bulb1.material = colors[1];
         moduleId = moduleIdCounter++;
         moduleSolved = false;
+        cbEnabled = colorblind.ColorblindModeActive;
         foreach (KMSelectable obj in buttons)
         {
             KMSelectable pressed = obj;
             pressed.OnInteract += delegate () { PressButton(pressed); return false; };
         }
+        GetComponent<KMBombModule>().OnActivate += OnActivate;
     }
 
     void Start()
@@ -66,12 +68,22 @@ public class OrangeArrowsScript : MonoBehaviour
         }
         numDisplay.GetComponent<TextMesh>().text = " ";
         randomizeMoves();
-        co = StartCoroutine(makeFlashes());
+        if (activated)
+            co = StartCoroutine(makeFlashes(false));
+    }
+
+    void OnActivate()
+    {
+        bulb1.material = colors[1];
+        co = StartCoroutine(makeFlashes(true));
+        if (cbEnabled)
+            colorblindText.SetActive(true);
+        activated = true;
     }
 
     void PressButton(KMSelectable pressed)
     {
-        if (moduleSolved != true)
+        if (moduleSolved != true && activated != false)
         {
             pressed.AddInteractionPunch(0.25f);
             audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, pressed.transform);
@@ -195,10 +207,13 @@ public class OrangeArrowsScript : MonoBehaviour
         Debug.LogFormat(logger2, moduleId, stage);
     }
 
-    private IEnumerator makeFlashes()
+    private IEnumerator makeFlashes(bool shortDelay)
     {
         yield return null;
-        yield return new WaitForSeconds(2.0f);
+        if (shortDelay)
+            yield return new WaitForSeconds(0.5f);
+        else
+            yield return new WaitForSeconds(2.0f);
         rotator = 0;
         while (rotator < movesEDIT.Length)
         {
@@ -224,7 +239,7 @@ public class OrangeArrowsScript : MonoBehaviour
             rotator++;
         }
         StopCoroutine(co);
-        co = StartCoroutine(makeFlashes());
+        co = StartCoroutine(makeFlashes(false));
     }
 
     private IEnumerator victory()
@@ -245,7 +260,6 @@ public class OrangeArrowsScript : MonoBehaviour
             yield return new WaitForSeconds(0.025f);
         }
         numDisplay.GetComponent<TextMesh>().text = "GG";
-        StopCoroutine("victory");
         bulb3.material = colors[2];
         Debug.LogFormat("[Orange Arrows #{0}] All sequences were correct! Module Disarmed!", moduleId);
         trueModuleSolved = true;
@@ -253,9 +267,9 @@ public class OrangeArrowsScript : MonoBehaviour
     }
 
     //twitch plays
-#pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"!{0} left right down up [Presses the corresponding arrow buttons. The ENTIRE sequence must be entered in one command or else an error will occur.] | Direction words can be substituted as one letter (Ex. right as r)";
-#pragma warning restore 414
+    #pragma warning disable 414
+    private readonly string TwitchHelpMessage = @"!{0} left right down up [Presses the corresponding arrow buttons. The ENTIRE sequence must be entered in one command.] | Direction words can be substituted as one letter (Ex. right as r)";
+    #pragma warning restore 414
 
     IEnumerator ProcessTwitchCommand(string command)
     {
@@ -280,7 +294,7 @@ public class OrangeArrowsScript : MonoBehaviour
         else
         {
             yield return null;
-            yield return "sendtochaterror Error - Please include the entire sequence of arrows to press!";
+            yield return "sendtochaterror Please include the entire sequence of arrows to press!";
             yield break;
         }
 
@@ -291,6 +305,8 @@ public class OrangeArrowsScript : MonoBehaviour
 
     private IEnumerator TwitchHandleForcedSolve()
     {
+        while (!activated)
+            yield return true;
         while (!moduleSolved)
         {
             buttons[Array.IndexOf(new string[] { "UP", "DOWN", "LEFT", "RIGHT" }, movesEDIT[current])].OnInteract();
