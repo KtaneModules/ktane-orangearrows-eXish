@@ -5,7 +5,8 @@ using UnityEngine;
 using KModkit;
 using System;
 
-public class OrangeArrowsScript : MonoBehaviour {
+public class OrangeArrowsScript : MonoBehaviour
+{
 
     public KMAudio audio;
     public KMBombInfo bomb;
@@ -32,6 +33,7 @@ public class OrangeArrowsScript : MonoBehaviour {
     static int moduleIdCounter = 1;
     int moduleId;
     private bool moduleSolved;
+    private bool trueModuleSolved;
 
     void Awake()
     {
@@ -40,20 +42,23 @@ public class OrangeArrowsScript : MonoBehaviour {
         bulb1.material = colors[1];
         moduleId = moduleIdCounter++;
         moduleSolved = false;
-        foreach(KMSelectable obj in buttons){
+        foreach (KMSelectable obj in buttons)
+        {
             KMSelectable pressed = obj;
             pressed.OnInteract += delegate () { PressButton(pressed); return false; };
         }
     }
 
-    void Start () {
+    void Start()
+    {
         current = 0;
         rotator = 0;
         if (stage == 2)
         {
             bulb1.material = colors[2];
             bulb2.material = colors[1];
-        }else if (stage == 3)
+        }
+        else if (stage == 3)
         {
             bulb1.material = colors[2];
             bulb2.material = colors[2];
@@ -119,7 +124,7 @@ public class OrangeArrowsScript : MonoBehaviour {
 
     private void randomizeMoves()
     {
-        int rando = UnityEngine.Random.Range(5,13);
+        int rando = UnityEngine.Random.Range(5, 13);
         int random = 0;
         int counter = 0;
         moves = new string[rando];
@@ -177,9 +182,9 @@ public class OrangeArrowsScript : MonoBehaviour {
             }
         }
         string logger1 = "[Orange Arrows #{0}] The displayed sequence (#{1}) is";
-        for(int j = 0; j < rando; j++)
+        for (int j = 0; j < rando; j++)
         {
-            logger1 += " '"+moves[j]+"'";
+            logger1 += " '" + moves[j] + "'";
         }
         Debug.LogFormat(logger1, moduleId, stage);
         string logger2 = "[Orange Arrows #{0}] The inputs for sequence (#{1}) should be";
@@ -243,13 +248,14 @@ public class OrangeArrowsScript : MonoBehaviour {
         StopCoroutine("victory");
         bulb3.material = colors[2];
         Debug.LogFormat("[Orange Arrows #{0}] All sequences were correct! Module Disarmed!", moduleId);
+        trueModuleSolved = true;
         GetComponent<KMBombModule>().HandlePass();
     }
 
     //twitch plays
-    #pragma warning disable 414
+#pragma warning disable 414
     private readonly string TwitchHelpMessage = @"!{0} left right down up [Presses the corresponding arrow buttons. The ENTIRE sequence must be entered in one command or else an error will occur.] | Direction words can be substituted as one letter (Ex. right as r)";
-    #pragma warning restore 414
+#pragma warning restore 414
 
     IEnumerator ProcessTwitchCommand(string command)
     {
@@ -281,5 +287,16 @@ public class OrangeArrowsScript : MonoBehaviour {
         yield return null;
         yield return buttonsToPress;
         if (moduleSolved) { yield return "solve"; }
+    }
+
+    private IEnumerator TwitchHandleForcedSolve()
+    {
+        while (!moduleSolved)
+        {
+            buttons[Array.IndexOf(new string[] { "UP", "DOWN", "LEFT", "RIGHT" }, movesEDIT[current])].OnInteract();
+            yield return new WaitForSeconds(0.1f);
+        }
+        while (!trueModuleSolved)
+            yield return true;
     }
 }
