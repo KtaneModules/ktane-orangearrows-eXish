@@ -23,11 +23,11 @@ MonoBehaviour:
     PDF: https://ktane.timwi.de/PDF/Orange%20Arrows.pdf
 
 
-    Orange Arrows (orangeArrowsModule) v1.0.5
+    Orange Arrows (orangeArrowsModule) v1.0.6
 
     Module and Concept by eXish
 
     Twitch Plays supported'
-  version: 1.0.5
+  version: 1.0.6
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 394c7e8215a1d3d4398058fdd1497a9a, type: 3}
