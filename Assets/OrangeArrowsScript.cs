@@ -6,12 +6,13 @@ using System;
 public class OrangeArrowsScript : MonoBehaviour
 {
 
-    public KMAudio audio;
+    public KMAudio Audio;
     public KMBombInfo bomb;
     public KMColorblindMode colorblind;
     public KMSelectable[] buttons;
     public GameObject numDisplay;
     public GameObject colorblindText;
+    public KMRuleSeedable RuleSeedable;
 
     public Renderer bulb1;
     public Renderer bulb2;
@@ -37,6 +38,10 @@ public class OrangeArrowsScript : MonoBehaviour
     private bool moduleSolved;
     private bool trueModuleSolved;
 
+    private string[] _dirs = new string[] { "UP", "DOWN", "LEFT", "RIGHT" };
+    private int _ruleSeedCount = -1;
+    private int _ruleSeedDir = -1;
+
     void Awake()
     {
         stage = 1;
@@ -53,6 +58,12 @@ public class OrangeArrowsScript : MonoBehaviour
 
     void Start()
     {
+        var rnd = RuleSeedable.GetRNG();
+        _ruleSeedCount = rnd.Next(0, 3) + 3; // 3, 4, 5
+        _ruleSeedDir = rnd.Next(0, 3); // opp, cw, ccw
+        if (rnd.Seed != 1)
+            Debug.LogFormat("[Orange Arrows #{0}] Using rule seed {1}.", moduleId, rnd.Seed);
+
         current = 0;
         rotator = 0;
         if (stage == 2)
@@ -86,7 +97,7 @@ public class OrangeArrowsScript : MonoBehaviour
         if (moduleSolved != true && activated != false)
         {
             pressed.AddInteractionPunch(0.25f);
-            audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, pressed.transform);
+            Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, pressed.transform);
             if (pressed == buttons[0] && !movesEDIT[current].Equals("UP"))
             {
                 GetComponent<KMBombModule>().HandleStrike();
@@ -137,34 +148,61 @@ public class OrangeArrowsScript : MonoBehaviour
     private void randomizeMoves()
     {
         int rando = UnityEngine.Random.Range(5, 13);
-        int random = 0;
         int counter = 0;
         moves = new string[rando];
         movesEDIT = new string[rando];
         for (int i = 0; i < rando; i++)
         {
-            random = UnityEngine.Random.Range(0, 4);
-            if (counter == 3)
+            int random = UnityEngine.Random.Range(0, 4);
+            if (counter == _ruleSeedCount - 1)
             {
                 if (random == 0)
                 {
                     moves[i] = "UP";
-                    movesEDIT[i] = "DOWN";
+                    if (_ruleSeedDir == 0)
+                        movesEDIT[i] = "DOWN";
+                    else if (_ruleSeedDir == 1)
+                        movesEDIT[i] = "RIGHT";
+                    else if (_ruleSeedDir == 2)
+                        movesEDIT[i] = "LEFT";
+                    else
+                        throw new InvalidOperationException("There was a bug in the ruleseed generation.");
                 }
                 else if (random == 1)
                 {
                     moves[i] = "DOWN";
-                    movesEDIT[i] = "UP";
+                    if (_ruleSeedDir == 0)
+                        movesEDIT[i] = "UP";
+                    else if (_ruleSeedDir == 1)
+                        movesEDIT[i] = "LEFT";
+                    else if (_ruleSeedDir == 2)
+                        movesEDIT[i] = "RIGHT";
+                    else
+                        throw new InvalidOperationException("There was a bug in the ruleseed generation.");
                 }
                 else if (random == 2)
                 {
                     moves[i] = "LEFT";
-                    movesEDIT[i] = "RIGHT";
+                    if (_ruleSeedDir == 0)
+                        movesEDIT[i] = "RIGHT";
+                    else if (_ruleSeedDir == 1)
+                        movesEDIT[i] = "UP";
+                    else if (_ruleSeedDir == 2)
+                        movesEDIT[i] = "DOWN";
+                    else
+                        throw new InvalidOperationException("There was a bug in the ruleseed generation.");
                 }
                 else if (random == 3)
                 {
                     moves[i] = "RIGHT";
-                    movesEDIT[i] = "LEFT";
+                    if (_ruleSeedDir == 0)
+                        movesEDIT[i] = "LEFT";
+                    else if (_ruleSeedDir == 1)
+                        movesEDIT[i] = "DOWN";
+                    else if (_ruleSeedDir == 2)
+                        movesEDIT[i] = "UP";
+                    else
+                        throw new InvalidOperationException("There was a bug in the ruleseed generation.");
                 }
                 counter = 0;
             }
