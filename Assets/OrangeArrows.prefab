@@ -197,6 +197,7 @@ GameObject:
   - component: {fileID: 114955983699408186}
   - component: {fileID: 114137747078870040}
   - component: {fileID: 114034058005544610}
+  - component: {fileID: 114743401547340750}
   m_Layer: 0
   m_Name: OrangeArrows
   m_TagString: Untagged
@@ -1489,7 +1490,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72b8388f398becf4e86a5f7c2a8504f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audio: {fileID: 114335410585506892}
+  Audio: {fileID: 114335410585506892}
   bomb: {fileID: 114375059033245494}
   colorblind: {fileID: 114955983699408186}
   buttons:
@@ -1499,6 +1500,7 @@ MonoBehaviour:
   - {fileID: 114323112331468364}
   numDisplay: {fileID: 1320828639102708}
   colorblindText: {fileID: 1489982841913530}
+  RuleSeedable: {fileID: 114743401547340750}
   bulb1: {fileID: 23050500311757822}
   bulb2: {fileID: 23769354085209200}
   bulb3: {fileID: 23402658735166718}
@@ -1797,6 +1799,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShaderNames:
   - KT/Mobile/DiffuseTint
+--- !u!114 &114743401547340750
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1371807027823920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adf69c2de51bd3c43bbd9bc22578ee08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _seed: 1
 --- !u!114 &114795542345942122
 MonoBehaviour:
   m_ObjectHideFlags: 1
